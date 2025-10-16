@@ -18,22 +18,25 @@
 body{
   margin:0;font-family:'Montserrat',sans-serif;
   background:linear-gradient(160deg,var(--bg1),var(--bg2));
-  color:#fff;display:flex;min-height:100vh;
+  color:#fff;display:flex;min-height:100vh;overflow-x:hidden;
 }
-.sidebar{width:260px;padding:20px;background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);border-right:1px solid rgba(255,255,255,0.06);position:sticky;top:0;height:100vh;}
+.sidebar{
+  width:260px;padding:20px;background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(8px);border-right:1px solid rgba(255,255,255,0.06);
+  position:sticky;top:0;height:100vh;z-index:1000;
+}
 .logo{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
-.mark{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#111;box-shadow:0 0 12px rgba(255,122,24,0.6);overflow:hidden;background:linear-gradient(45deg,var(--accent),#ffb36b);}
+.mark{width:52px;height:52px;border-radius:12px;overflow:hidden;background:linear-gradient(45deg,var(--accent),#ffb36b);}
 .mark img{width:100%;height:100%;object-fit:cover}
 .logo h1{margin:0;font-size:18px}
 .menu{display:flex;flex-direction:column;gap:10px;margin-top:8px}
 .menu button{background:transparent;border:0;color:var(--muted);padding:10px;border-radius:10px;text-align:left;font-weight:600;cursor:pointer;}
 .menu button.active,.menu button:hover{background:var(--glass);color:#fff;transform:translateX(4px);}
 .main{flex:1;padding:28px;overflow:auto;}
-.top{display:flex;flex-direction:column;gap:18px;margin-bottom:18px;align-items:center}
-.hero-left{flex:1}
-.title{font-size:28px;font-weight:900;margin:0}
-.subtitle{color:var(--muted);margin-top:6px}
-.hero-cta{display:flex;gap:12px;align-items:center}
+.hero-left{flex:1;text-align:center;}
+.title{font-size:26px;font-weight:900;margin:0}
+.subtitle{color:var(--muted);margin-top:6px;font-size:14px}
+.hero-cta{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:12px}
 .btn{background:var(--accent);border:0;color:#111;font-weight:700;padding:10px 16px;border-radius:12px;cursor:pointer;box-shadow:0 8px 24px rgba(255,122,24,0.28);}
 .small{background:transparent;border:1px solid rgba(255,255,255,0.1);padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;margin-top:18px}
@@ -43,10 +46,22 @@ body{
 .product-image img{max-width:92%;max-height:92%;border-radius:12px;filter:drop-shadow(0 12px 30px rgba(0,0,0,0.55));transition:transform .4s;}
 .card:hover .product-image img{transform:translateY(-6px) scale(1.02)}
 .price{font-size:18px;font-weight:800;color:var(--accent)}
-.cart-panel{width:340px;background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);border-left:1px solid rgba(255,255,255,0.06);padding:18px;position:sticky;top:0;height:100vh;}
+.cart-btn{
+  position:fixed;bottom:22px;right:22px;background:var(--accent);
+  color:#111;font-weight:800;border:none;border-radius:50%;
+  width:58px;height:58px;font-size:24px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.4);z-index:1100;
+}
+.cart-panel{
+  position:fixed;top:0;right:-100%;width:340px;height:100%;
+  background:#0d0d19;backdrop-filter:blur(8px);transition:right .3s;
+  border-left:1px solid rgba(255,255,255,0.06);padding:18px;z-index:1200;
+}
+.cart-panel.show{right:0;}
 .cart-list{display:flex;flex-direction:column;gap:10px;max-height:55vh;overflow:auto;}
 .cart-item{display:flex;gap:10px;align-items:center}
 .cart-item img{width:56px;height:56px;border-radius:8px;object-fit:cover}
+.close-cart{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;position:absolute;top:10px;right:12px;}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:20px;}
 .modal .box{background:#101020;padding:22px;border-radius:14px;width:100%;max-width:520px;animation:pop .28s ease;}
 @keyframes pop{from{transform:scale(.95);opacity:0;}to{transform:scale(1);opacity:1;}}
@@ -57,15 +72,29 @@ textarea{resize:none;height:88px}
 .payment-options label{flex:1;text-align:center;background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;cursor:pointer;transition:all .2s;}
 .payment-options input[type="radio"]{display:none;}
 .payment-options input[type="radio"]:checked + span{background:var(--accent);color:#111;font-weight:700;}
-@media(max-width:980px){body{flex-direction:column}.sidebar,.cart-panel{display:none}.main{padding:18px}}
+@media(max-width:980px){
+  .sidebar{position:fixed;left:-100%;height:100%;transition:left .3s;width:230px;z-index:1200;}
+  .sidebar.show{left:0;}
+  .menu-toggle{
+    position:fixed;top:14px;left:14px;background:var(--accent);color:#111;
+    border:none;padding:10px 14px;border-radius:10px;font-weight:800;
+    cursor:pointer;z-index:1300;box-shadow:0 6px 18px rgba(0,0,0,0.4);
+  }
+  body{flex-direction:column;}
+  .main{padding:18px;margin-top:60px;}
+}
 </style>
 </head>
 <body>
 
+<!-- Botón menú hamburguesa -->
+<button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+<!-- Sidebar -->
 <aside class="sidebar">
   <div class="logo">
     <div class="mark">
-      <img src="https://i.postimg.cc/9MmHWH4j/visiowebimg.jpg" alt="ShopPhone Logo">
+      <img src="https://i.postimg.cc/9MmHWH4j/visiowebimg.jpg" alt="Logo">
     </div>
     <div>
       <h1>Página de Ejemplo</h1>
@@ -84,15 +113,14 @@ textarea{resize:none;height:88px}
   </div>
 </aside>
 
+<!-- Contenido principal -->
 <main class="main" id="home">
-  <div class="top">
-    <div class="hero-left">
-      <h1 class="title">¡Estrena sin miedo con la Página de Ejemplo!</h1>
-      <div class="subtitle">Celulares nuevos y de exhibición — Garantía y envío a todo México.</div>
-      <div class="hero-cta" style="margin-top:12px">
-        <button class="btn" onclick="scrollToSection('catalog')">Ver catálogo</button>
-        <div style="color:var(--muted);font-weight:700">Envíos a todo México</div>
-      </div>
+  <div class="hero-left">
+    <h1 class="title">¡Estrena sin miedo con la Página de Ejemplo!</h1>
+    <div class="subtitle">Celulares nuevos y de exhibición — Garantía y envío a todo México.</div>
+    <div class="hero-cta">
+      <button class="btn" onclick="scrollToSection('catalog')">Ver catálogo</button>
+      <div style="color:var(--muted);font-weight:700">Envíos a todo México</div>
     </div>
   </div>
 
@@ -123,7 +151,9 @@ textarea{resize:none;height:88px}
   </section>
 </main>
 
-<aside class="cart-panel">
+<!-- Panel del carrito -->
+<aside class="cart-panel" id="cartPanel">
+  <button class="close-cart" onclick="toggleCart()">×</button>
   <h3>🛒 Carrito</h3>
   <div id="cartList" class="cart-list"><div style="color:var(--muted)">No hay productos aún.</div></div>
   <div class="cart-footer">
@@ -138,10 +168,14 @@ textarea{resize:none;height:88px}
   </div>
 </aside>
 
+<!-- Botón flotante del carrito -->
+<button class="cart-btn" onclick="toggleCart()">🛒</button>
+
+<!-- Modal -->
 <div class="modal" id="modal">
   <div class="box">
     <h3>Formulario de pedido</h3>
-    <p style="color:var(--muted);margin-top:6px">Completa tus datos y enviaremos tu pedido por WhatsApp con fecha/hora automática.</p>
+    <p style="color:var(--muted);margin-top:6px">Completa tus datos y enviaremos tu pedido por WhatsApp.</p>
     <form id="orderForm" onsubmit="submitOrder(event)" style="display:grid;gap:10px;margin-top:10px">
       <div><label>Nombre completo</label><input id="name" required></div>
       <div><label>Teléfono (WhatsApp)</label><input id="phone" required placeholder="Ej: 6671234567"></div>
@@ -178,15 +212,11 @@ function renderProducts(){
     const card=document.createElement('div');
     card.className='card';
     card.innerHTML=`
-      <div class="product-image">
-        <img src="${p.img}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/300x400?text=Sin+imagen'">
-      </div>
+      <div class="product-image"><img src="${p.img}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/300x400?text=Sin+imagen'"></div>
       <div><strong>${p.title}</strong><br><span style="color:var(--muted);font-size:13px">${p.meta}</span></div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="price">$${p.price.toLocaleString('es-MX')}</div>
-        <div style="display:flex;gap:6px">
-          <button class="btn" onclick="addToCartById('${p.id}')">Agregar</button>
-        </div>
+        <button class="btn" onclick="addToCartById('${p.id}')">Agregar</button>
       </div>`;
     grid.appendChild(card);
   });
@@ -217,18 +247,16 @@ function renderCart(){
     const el=document.createElement('div');
     el.className='cart-item';
     el.innerHTML=`
-      <img src="${i.img}" onerror="this.src='https://via.placeholder.com/100'">
+      <img src="${i.img}">
       <div style="flex:1">
         <div style="font-weight:700">${i.title}</div>
         <div style="font-size:13px;color:var(--muted)">${i.qty} × $${i.price.toLocaleString('es-MX')}</div>
       </div>
-      <div style="text-align:right">
-        <strong style="color:var(--accent)">$${(i.qty*i.price).toLocaleString('es-MX')}</strong>
-      </div>`;
+      <div style="text-align:right"><strong style="color:var(--accent)">$${(i.qty*i.price).toLocaleString('es-MX')}</strong></div>`;
     cartList.appendChild(el);
   });
   const total=cart.reduce((sum,i)=>sum+i.price*i.qty,0);
-  subtotalEl.innerText=`$${total.toLocaleString('es-MX')} MXN`;
+  subtotalEl.innerText=$${total.toLocaleString('es-MX')} MXN;
 }
 
 function emptyCart(){cart=[];renderCart();}
@@ -237,11 +265,9 @@ const modal=document.getElementById('modal');
 function openModal(){
   if(cart.length===0){alert('No hay productos en el carrito');return;}
   modal.style.display='flex';
-  document.getElementById('orderProducts').value=cart.map(c=>`${c.qty} × ${c.title} ($${c.price})`).join('\n');
+  document.getElementById('orderProducts').value=cart.map(c=>${c.qty} × ${c.title} ($${c.price})).join('\n');
 }
-
 function closeModal(){modal.style.display='none';}
-
 function submitOrder(e){
   e.preventDefault();
   const name=document.getElementById('name').value.trim();
@@ -253,16 +279,23 @@ function submitOrder(e){
   if(!payMethod){alert('Selecciona un método de pago');return;}
   const now=new Date();
   const dateStr=now.toLocaleString('es-MX');
-  const msg=`*Pedido de Ejemplo*\nNombre: ${name}\nTel: ${phone}\nDirección: ${address}\nPago: ${payMethod}\nFecha/Hora: ${dateStr}\n\nProductos:\n${productsText}`;
-  const waUrl=`https://wa.me/526677975519?text=${encodeURIComponent(msg)}`;
+  const msg=*Pedido de Ejemplo*\nNombre: ${name}\nTel: ${phone}\nDirección: ${address}\nPago: ${payMethod}\nFecha/Hora: ${dateStr}\n\nProductos:\n${productsText};
+  const waUrl=https://wa.me/526677975519?text=${encodeURIComponent(msg)};
   window.open(waUrl,'_blank');
   closeModal();
-  emptyCart();
 }
 
+function toggleCart(){
+  document.getElementById('cartPanel').classList.toggle('show');
+}
+function toggleMenu(){
+  document.querySelector('.sidebar').classList.toggle('show');
+}
 function scrollToSection(id){
-  const el=document.getElementById(id);
-  if(el)el.scrollIntoView({behavior:'smooth'});
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelector('.sidebar').classList.remove('show');
 }
 </script>
 </body>
